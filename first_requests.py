@@ -14,8 +14,13 @@ def get_links(url):
     # Список ссылок
     table_link = soup.find('div', class_='table-responsive')
 
-    link_list = []
-    for a in table_link.find_all('a', href=True):
-        link_list.append(a['href'])
+    links = []
+    names = []
 
-    return(link_list)
+    for a in table_link.find_all('a', href=True):
+        links.append(a['href'])
+        names.append(a.text)
+    
+    dictionary = {'Ссылки': links, 'Названия': names}
+
+    return(dictionary)
