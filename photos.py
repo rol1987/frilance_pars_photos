@@ -33,7 +33,7 @@ def save_photos(link_list, name_folder):
         
         immages = soup.find('div', class_='clearfix mosaicflow').find_all('img', src=True)
 
-        list_immages = []
+        list_immages = [] # Список для наполнения ссылками на фотографии
 
         for img in immages:
             list_immages.append(img['src'])
