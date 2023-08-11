@@ -6,9 +6,7 @@ import os
 from pprint import pprint
 from io import BytesIO
 from PIL import Image
-import work_with_photos
 import time
-import datetime
 
 
 def responses(links, name_list, name_folder):
@@ -27,13 +25,10 @@ def responses(links, name_list, name_folder):
     
     response = (grequests.get(url) for url in sites)
     resp = grequests.map(response)
-    print(resp)
 
     # Запускаем цикл и проходим по первичным ссылкам
-    stranica = 0
+    stranica = 0 # нужно для того, чтобы итерироваться по списку и названиями страниц. Чтобы потом добавлять это в название сохраняемого файла
     for r in resp:
-        
-        
         ind = 1
         number_pages = 1
         next_page = r.url
@@ -54,7 +49,6 @@ def responses(links, name_list, name_folder):
                 if find_next_page != None:
                     if int(find_next_page.text) == number_pages + 1:
                         pages_list.append(next_page) # Список ссылок на внутренние страницы
-                        
                         number_pages += 1
                         ind = 1
                     else:
@@ -64,7 +58,6 @@ def responses(links, name_list, name_folder):
             else:
                 ind = 0
     
-        
         response = (grequests.get(url) for url in pages_list)
         resp_pages_list = grequests.map(response)
         
@@ -75,7 +68,7 @@ def responses(links, name_list, name_folder):
             for l in soup_rpl.find('div', class_='clearfix mosaicflow').find_all('a', class_='fancyimage'):
                 count_photo += 1
                 list_img_link.append(l['href']) # Список, в котором хранятся ссылки на все фотографии подраздела
-            print(f'На странице {count_photo} фотографий')
+            print(f'На странице ---> {count_photo} фотографий')
 
         # Перебираем список и сохраняем фотографии
         k = 0
@@ -93,7 +86,9 @@ def responses(links, name_list, name_folder):
         
             # Подключаемся к фото и сохраняем его
             img_data = requests.get(link_photo, headers=headers).content
-            full_path_img = os.path.join(full_path, f'{name_list[stranica]}_{k}.jpg')
+            file_name = name_list[stranica]
+            file_name = file_name.replace('/', '_')
+            full_path_img = os.path.join(full_path, f'{file_name}_{k}.jpg')
             with open(full_path_img, 'wb') as handler:
                     handler.write(img_data)
 
@@ -121,7 +116,6 @@ def responses(links, name_list, name_folder):
             
             time.sleep(0.1)
          
-            
         # Удаляем ненужные фото и оставляем 3 самих горизонтальных
         while len(sorted_dict_foto_width) > 3:
             indexToBeRemoved = 0
